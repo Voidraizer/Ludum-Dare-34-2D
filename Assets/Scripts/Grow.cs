@@ -21,6 +21,13 @@ public class Grow : MonoBehaviour {
     private float waterDecrement = 0.05f;
     [SerializeField]
     private float sunlightDecrement = 0.05f;
+    [SerializeField]
+    private float waterMax = 1f;
+    [SerializeField]
+    private float sunlightMax = 1f;
+
+    public float waterRatio;
+    public float sunlightRatio;
 
     //public float waterSaved
     //{
@@ -61,24 +68,35 @@ public class Grow : MonoBehaviour {
             sunlightStored += sunlightIncrement;
         }
 
-        growth = ( waterStored / waterThreshold ) + ( sunlightStored / sunlightThreshold );
-        if( growth < 1 )
+        growth = ( waterStored / waterThreshold ) * ( sunlightStored / sunlightThreshold );
+        if( growth < 1f )
         {
-            growth = 1;
+            growth = 1f;
         }
         else if( growth > 1.001f )
         {
             growth = 1.001f;
         }
-        if( waterStored < 0 )
+        if( waterStored < 0f )
         {
             waterStored = 0f;
         }
-        if( sunlightStored < 0 )
+        else if( waterStored > 1f )
+        {
+            waterStored = 1f;
+        }
+        if( sunlightStored < 0f )
         {
             sunlightStored = 0f;
         }
+        else if( sunlightStored > 1f )
+        {
+            sunlightStored = 1f;
+        }
         GetBigger( growth );
+
+        waterRatio = waterStored / waterMax;
+        sunlightRatio = sunlightStored / sunlightMax;
 	}
 
     void GetBigger( float rate )
