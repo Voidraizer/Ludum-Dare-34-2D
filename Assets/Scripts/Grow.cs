@@ -86,7 +86,7 @@ public class Grow : MonoBehaviour
 
     private bool dKeySwitched = false;
     private bool kKeySwitched = false;
-    private bool dead = false;
+    public bool dead = false;
 
     void Start()
     {

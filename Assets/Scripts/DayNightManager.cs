@@ -13,6 +13,15 @@ public class DayNightManager : MonoBehaviour {
     [SerializeField]
     private Image Background;
 
+    [SerializeField]
+    private SpriteRenderer sprender;
+
+    [SerializeField]
+    private Grow grow_cs;
+
+    [SerializeField]
+    private SeasonManager season;
+
     private enum timeOfDay { EARLY_MORNING, MORNING, NOON, EVENING, LATE_NIGHT };
 
     [SerializeField]
@@ -57,117 +66,124 @@ public class DayNightManager : MonoBehaviour {
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( earlyMorning.r, earlyMorning.g, earlyMorning.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
+                sunlightTimeMultiplier = 0.9f;
+                waterTimeMultiplier = 1.2f;
                 while( looping )
                 {
                     //shift color
                     timeDifference = conversionRate * ( Time.time - startTime );
                     Background.color = Color.Lerp( Starting, earlyMorning, ( timeDifference / distance ) );
-
+                    if( !grow_cs.dead )
+                    {
+                        sprender.color = Background.color;
+                    }
                     yield return new WaitForEndOfFrame();
-
                     // when done
                     if( ( Background.color == earlyMorning ) || ( Time.time - startTime >= 5f ) )
                     {
                         looping = false;
                     }
                 }
-                // set time rate offset
-                sunlightTimeMultiplier = 0.9f;
-                waterTimeMultiplier = 1.2f;
                 break;
             case timeOfDay.MORNING:
                 looping = true;
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( morning.r, morning.g, morning.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
+                sunlightTimeMultiplier = 1.0f;
+                waterTimeMultiplier = 1.0f;
                 while( looping )
                 {
                     //shift color
                     timeDifference = conversionRate * ( Time.time - startTime );
                     Background.color = Color.Lerp( Starting, morning, ( timeDifference / distance ) );
-
+                    if( !grow_cs.dead )
+                    {
+                        sprender.color = Background.color;
+                    }
                     yield return new WaitForEndOfFrame();
-
                     // when done
                     if( ( Background.color == morning ) || ( Time.time - startTime >= 5f ) )
                     {
                         looping = false;
                     }
                 }
-                sunlightTimeMultiplier = 1.0f;
-                waterTimeMultiplier = 1.0f;
                 break;
             case timeOfDay.NOON:
                 looping = true;
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( noon.r, noon.g, noon.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
+                sunlightTimeMultiplier = 1.1f;
+                waterTimeMultiplier = 0.9f;
                 while( looping )
                 {
                     //shift color
                     timeDifference = conversionRate * ( Time.time - startTime );
                     Background.color = Color.Lerp( Starting, noon, ( timeDifference / distance ) );
-
+                    if( !grow_cs.dead )
+                    {
+                        sprender.color = Background.color;
+                    }
                     yield return new WaitForEndOfFrame();
-
                     // when done
                     if( ( Background.color == noon ) || ( Time.time - startTime >= 5f ) )
                     {
                         looping = false;
                     }
                 }
-                sunlightTimeMultiplier = 1.1f;
-                waterTimeMultiplier = 0.9f;
                 break;
             case timeOfDay.EVENING:
                 looping = true;
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( evening.r, evening.g, evening.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
+                sunlightTimeMultiplier = 0.9f;
+                waterTimeMultiplier = 1.0f;
                 while( looping )
                 {
                     //shift color
                     timeDifference = conversionRate * ( Time.time - startTime );
                     Background.color = Color.Lerp( Starting, evening, ( timeDifference / distance ) );
-
+                    if( !grow_cs.dead )
+                    {
+                        sprender.color = Background.color;
+                    }
                     yield return new WaitForEndOfFrame();
-
                     // when done
                     if( ( Background.color == evening ) || ( Time.time - startTime >= 5f ) )
                     {
                         looping = false;
                     }
                 }
-                sunlightTimeMultiplier = 0.9f;
-                waterTimeMultiplier = 1.0f;
                 break;
             case timeOfDay.LATE_NIGHT:
                 looping = true;
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( lateEvening.r, lateEvening.g, lateEvening.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
+                sunlightTimeMultiplier = 0.8f;
+                waterTimeMultiplier = 1.1f;
                 while( looping )
                 {
                     //shift color
                     timeDifference = conversionRate * ( Time.time - startTime );
                     Background.color = Color.Lerp( Starting, lateEvening, ( timeDifference / distance ) );
-
+                    if( !grow_cs.dead )
+                    {
+                        sprender.color = Background.color;
+                    }
                     yield return new WaitForEndOfFrame();
-
                     // when done
                     if( ( Background.color == lateEvening ) || ( Time.time - startTime >= 5f ) )
                     {
                         looping = false;
                     }
                 }
-                sunlightTimeMultiplier = 0.8f;
-                waterTimeMultiplier = 1.1f;
                 break;
             default:
                 break;
         }
-        yield return new WaitForEndOfFrame();
-        
     }
 
     public void IncrementDayTime()
@@ -175,6 +191,7 @@ public class DayNightManager : MonoBehaviour {
         if( dayTime == timeOfDay.LATE_NIGHT )
         {
             dayTime = timeOfDay.EARLY_MORNING;
+            season.IncrementSunCycle();
         }
         else
         {
