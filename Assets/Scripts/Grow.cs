@@ -8,92 +8,278 @@ public class Grow : MonoBehaviour {
     [SerializeField]
     private float maxGrowth = 1.0001f;
     [SerializeField]
+    private float growthGlucoseFlat = 1.001f;
+
+    [SerializeField]
     private float waterStored = 0f;
     [SerializeField]
     private float sunlightStored = 0f;
+    [SerializeField]
+    private float glucoseStored = 0f;
+
     [SerializeField]
     private float waterIncrement = 0.1f;
     [SerializeField]
     private float sunlightIncrement = 0.1f;
     [SerializeField]
+    private float glucoseIncrement = 0.1f;
+    [SerializeField]
+    private float waterIncrement2 = 0.1f;
+    [SerializeField]
+    private float sunlightIncrement2 = 0.1f;
+
+    [SerializeField]
     private float waterThreshold = 0.75f;
     [SerializeField]
     private float sunlightThreshold = 0.75f;
+
     [SerializeField]
     private float waterDecrement = 0.05f;
     [SerializeField]
     private float sunlightDecrement = 0.05f;
     [SerializeField]
+    private float glucoseDecrement = 0.1f;
+    [SerializeField]
+    private float glucoseConsumption = 0.005f;
+    [SerializeField]
+    private float waterDecrement2 = 0.05f;
+    [SerializeField]
+    private float sunlightDecrement2 = 0.05f;
+
+    [SerializeField]
     private float waterMax = 1f;
     [SerializeField]
     private float sunlightMax = 1f;
+    [SerializeField]
+    private float glucoseMax = 1f;
+
+    [SerializeField]
+    EventText eventText;
+
+    [SerializeField]
+    DayNightManager days;
+    [SerializeField]
+    SeasonManager seasons;
+
+    [SerializeField]
+    private float keySwitchTime = 1f;
+    private float dKeyPressTime = 0f;
+    private float kKeyPressTime = 0f;
+    
+    private enum Controls { BASIC, EXPANDED };
+    private enum DKeyControls { WATER, SUNLIGHT };
+    private enum KKeyControls { GLUCOSE, GROW };
+
+    Controls gameControls;
+    DKeyControls dKey;
+    KKeyControls kKey;
 
     public float waterRatio;
     public float sunlightRatio;
+    public float glucoseRatio;
 
-    //public float waterSaved
-    //{
-    //    get
-    //    {
-    //        return waterStored;
-    //    }
-    //    set
-    //    {
-    //        if( ( waterSaved + value <= 1.0f ) && ( waterSaved - value >= 0f ) )
-    //        {
-    //            waterSaved = value;
-    //        }
-    //    }
-    //}
+    private bool dKeySwitched = false;
+    private bool kKeySwitched = false;
 
-	// Update is called once per frame
-	void Update () {
+    void Start()
+    {
+        gameControls = Controls.EXPANDED;
+        dKey = DKeyControls.SUNLIGHT;
+        kKey = KKeyControls.GLUCOSE;
+    }
+
+    // Update is called once per frame
+    void Update() {
         //   if( Input.GetKey( KeyCode.G ) )
         //   {
         //       transform.localScale = new Vector3( transform.localScale.x * growth, transform.localScale.y * growth, transform.localScale.z * growth );
         //   }
+        
+        if( Input.GetKeyDown( KeyCode.G ) )
+        {
+            if( gameControls == Controls.BASIC )
+            {
+                gameControls = Controls.EXPANDED;
+            }
+            else
+            {
+                gameControls = Controls.BASIC;
+            }
+        }
 
-        waterStored -= waterDecrement;
-        sunlightStored -= sunlightDecrement;
-        if( Input.GetKeyDown( KeyCode.D ) )
+        if( gameControls == Controls.BASIC )
         {
-            waterStored += waterIncrement;
+            
+            if( Input.GetKeyDown( KeyCode.D ) )
+            {
+                waterStored += waterIncrement;
+            }
+            if( Input.GetKeyDown( KeyCode.K ) )
+            {
+                sunlightStored += sunlightIncrement;
+            }
+
+            growth = ( waterStored / waterThreshold ) * ( sunlightStored / sunlightThreshold );
+            if( growth < 1f )
+            {
+                growth = 1f;
+            }
+            else if( growth > maxGrowth )
+            {
+                growth = 1.001f;
+            }
+            if( waterStored < 0f )
+            {
+                waterStored = 0f;
+            }
+            else if( waterStored > waterMax )
+            {
+                waterStored = waterMax;
+            }
+            if( sunlightStored < 0f )
+            {
+                sunlightStored = 0f;
+            }
+            else if( sunlightStored > sunlightMax )
+            {
+                sunlightStored = sunlightMax;
+            }
+            GetBigger( growth );
         }
-        if( Input.GetKeyDown( KeyCode.K ) )
+        else if( gameControls == Controls.EXPANDED )  //------------------- EXPANDED ---------------------
         {
-            sunlightStored += sunlightIncrement;
+            if( Input.GetKeyDown( KeyCode.D ) )
+            {
+                dKeyPressTime = Time.time + keySwitchTime;
+                if( dKey == DKeyControls.WATER )
+                {
+                    waterStored += waterIncrement2 * seasons.waterSeasonMultiplier * days.waterTimeMultiplier;
+                }
+                else
+                {
+                    sunlightStored += sunlightIncrement2;
+                }
+                dKeySwitched = false;
+            }
+            if( Input.GetKeyDown( KeyCode.K ) )
+            {
+                kKeyPressTime = Time.time + keySwitchTime;
+                if( kKey == KKeyControls.GLUCOSE )
+                {
+                    if( ( glucoseStored < glucoseMax ) && ( waterStored > 0f ) && ( sunlightStored > 0f ) )
+                    {
+                        glucoseStored += glucoseIncrement;
+                        waterStored -= waterDecrement2;
+                        sunlightStored -= sunlightDecrement2;
+                    }
+                }
+                else
+                {
+                    if( glucoseStored > 0f )
+                    {
+                        glucoseStored -= glucoseDecrement;
+                        GetBigger( growthGlucoseFlat );
+                    }
+                }
+                kKeySwitched = false;
+            }
+
+            if( Input.GetKey( KeyCode.D ) )
+            {
+                if( Time.time >= dKeyPressTime )
+                {
+                    if( dKeySwitched == false )
+                    {
+                        if( dKey == DKeyControls.WATER )
+                        {
+                            dKey = DKeyControls.SUNLIGHT;
+                            eventText.SpawnEventText( "Sunlight" );
+                        }
+                        else if( dKey == DKeyControls.SUNLIGHT )
+                        {
+                            dKey = DKeyControls.WATER;
+                            eventText.SpawnEventText( "Water" );
+                        }
+                        dKeySwitched = true;
+                    }
+                }
+            }
+            if( Input.GetKey( KeyCode.K ) )
+            {
+                if( Time.time >= kKeyPressTime )
+                {
+                    if( kKeySwitched == false )
+                    {
+                        if( kKey == KKeyControls.GLUCOSE )
+                        {
+                            kKey = KKeyControls.GROW;
+                            eventText.SpawnEventText( "Grow" );
+                        }
+                        else if( kKey == KKeyControls.GROW )
+                        {
+                            kKey = KKeyControls.GLUCOSE;
+                            eventText.SpawnEventText( "Glucose" );
+                        }
+                        kKeySwitched = true;
+                    }
+                }
+            }
+
+            if( waterStored < 0f )
+            {
+                waterStored = 0f;
+            }
+            else if( waterStored > waterMax )
+            {
+                waterStored = waterMax;
+            }
+            if( sunlightStored < 0f )
+            {
+                sunlightStored = 0f;
+            }
+            else if( sunlightStored > sunlightMax )
+            {
+                sunlightStored = sunlightMax;
+            }
+            if( glucoseStored < 0f )
+            {
+                glucoseStored = 0f; // ****************  DEATH CONDITION ********************* //
+            }
+            else if( glucoseStored > glucoseMax )
+            {
+                glucoseStored = glucoseMax;
+            }
+
+
+
+
+
+
+
+
         }
 
-        growth = ( waterStored / waterThreshold ) * ( sunlightStored / sunlightThreshold );
-        if( growth < 1f )
-        {
-            growth = 1f;
-        }
-        else if( growth > maxGrowth )
-        {
-            growth = 1.001f;
-        }
-        if( waterStored < 0f )
-        {
-            waterStored = 0f;
-        }
-        else if( waterStored > 1f )
-        {
-            waterStored = 1f;
-        }
-        if( sunlightStored < 0f )
-        {
-            sunlightStored = 0f;
-        }
-        else if( sunlightStored > 1f )
-        {
-            sunlightStored = 1f;
-        }
-        GetBigger( growth );
+
+
+
 
         waterRatio = waterStored / waterMax;
         sunlightRatio = sunlightStored / sunlightMax;
+        glucoseRatio = glucoseStored / glucoseMax;
 	}
+
+    void FixedUpdate()
+    {
+        if( gameControls == Controls.EXPANDED )
+        {
+            glucoseStored -= glucoseConsumption;
+        }
+        else
+        {
+            waterStored -= waterDecrement;
+            sunlightStored -= sunlightDecrement;
+        }
+    }
 
     void GetBigger( float rate )
     {
