@@ -6,6 +6,8 @@ public class Grow : MonoBehaviour {
     [SerializeField]
     private float growth = 0.0001f;
     [SerializeField]
+    private float maxGrowth = 1.0001f;
+    [SerializeField]
     private float waterStored = 0f;
     [SerializeField]
     private float sunlightStored = 0f;
@@ -73,7 +75,7 @@ public class Grow : MonoBehaviour {
         {
             growth = 1f;
         }
-        else if( growth > 1.001f )
+        else if( growth > maxGrowth )
         {
             growth = 1.001f;
         }
