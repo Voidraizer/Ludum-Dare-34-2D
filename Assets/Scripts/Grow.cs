@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Grow : MonoBehaviour {
+public class Grow : MonoBehaviour
+{
 
     [SerializeField]
     private float growth = 0.0001f;
@@ -65,7 +66,12 @@ public class Grow : MonoBehaviour {
     private float keySwitchTime = 1f;
     private float dKeyPressTime = 0f;
     private float kKeyPressTime = 0f;
-    
+
+    [SerializeField]
+    private SpriteRenderer sprender;
+    [SerializeField]
+    private float deathColorRate = 0.2f;
+
     private enum Controls { BASIC, EXPANDED };
     private enum DKeyControls { WATER, SUNLIGHT };
     private enum KKeyControls { GLUCOSE, GROW };
@@ -80,6 +86,7 @@ public class Grow : MonoBehaviour {
 
     private bool dKeySwitched = false;
     private bool kKeySwitched = false;
+    private bool dead = false;
 
     void Start()
     {
@@ -89,12 +96,13 @@ public class Grow : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         //   if( Input.GetKey( KeyCode.G ) )
         //   {
         //       transform.localScale = new Vector3( transform.localScale.x * growth, transform.localScale.y * growth, transform.localScale.z * growth );
         //   }
-        
+
         if( Input.GetKeyDown( KeyCode.G ) )
         {
             if( gameControls == Controls.BASIC )
@@ -109,7 +117,7 @@ public class Grow : MonoBehaviour {
 
         if( gameControls == Controls.BASIC )
         {
-            
+
             if( Input.GetKeyDown( KeyCode.D ) )
             {
                 waterStored += waterIncrement;
@@ -166,7 +174,7 @@ public class Grow : MonoBehaviour {
                 kKeyPressTime = Time.time + keySwitchTime;
                 if( kKey == KKeyControls.GLUCOSE )
                 {
-                    if( ( glucoseStored < glucoseMax ) && ( waterStored > 0f ) && ( sunlightStored > 0f ) )
+                    if( ( glucoseStored < glucoseMax - glucoseIncrement ) && ( waterStored > 0f ) && ( sunlightStored > 0f ) )
                     {
                         glucoseStored += glucoseIncrement;
                         waterStored -= waterDecrement2;
@@ -241,32 +249,26 @@ public class Grow : MonoBehaviour {
             {
                 sunlightStored = sunlightMax;
             }
-            if( glucoseStored < 0f )
+            if( glucoseStored <= 0f )
             {
-                glucoseStored = 0f; // ****************  DEATH CONDITION ********************* //
+                glucoseStored = 0f;
+                // herp derp
+                if( !dead )
+                {
+                    dead = true;
+                    Die();
+                }
             }
             else if( glucoseStored > glucoseMax )
             {
                 glucoseStored = glucoseMax;
             }
-
-
-
-
-
-
-
-
         }
-
-
-
-
 
         waterRatio = waterStored / waterMax;
         sunlightRatio = sunlightStored / sunlightMax;
         glucoseRatio = glucoseStored / glucoseMax;
-	}
+    }
 
     void FixedUpdate()
     {
@@ -284,5 +286,35 @@ public class Grow : MonoBehaviour {
     void GetBigger( float rate )
     {
         transform.localScale = new Vector3( transform.localScale.x * rate, transform.localScale.y * rate, transform.localScale.z * rate );
+    }
+
+    void Die()
+    {
+        StartCoroutine( DeathTransition() );
+    }
+
+    IEnumerator DeathTransition()
+    {
+        bool looping = true;
+        float timeDifference = 0f;
+        Color Starting = Color.white;
+        Color Ending = Color.black;
+        float distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( Ending.r, Ending.g, Ending.b ) );
+        float startTime = Time.time;
+        timeDifference = 0f;
+        while( looping )
+        {
+            //shift color
+            timeDifference = deathColorRate * ( Time.time - startTime );
+            sprender.color = Color.Lerp( Starting, Ending, ( timeDifference / distance ) );
+            yield return new WaitForEndOfFrame();
+            // when done
+            if( ( sprender.color == Ending ) || ( Time.time - startTime >= 5f ) )
+            {
+                looping = false;
+            }
+        }
+        yield return new WaitForSeconds( 2f );
+        Application.LoadLevel( 1 );
     }
 }
