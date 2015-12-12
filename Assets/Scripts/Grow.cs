@@ -55,11 +55,11 @@ public class Grow : MonoBehaviour {
 
         waterStored -= waterDecrement;
         sunlightStored -= sunlightDecrement;
-        if( Input.GetKeyDown( KeyCode.W ) )
+        if( Input.GetKeyDown( KeyCode.D ) )
         {
             waterStored += waterIncrement;
         }
-        if( Input.GetKeyDown( KeyCode.S ) )
+        if( Input.GetKeyDown( KeyCode.K ) )
         {
             sunlightStored += sunlightIncrement;
         }
