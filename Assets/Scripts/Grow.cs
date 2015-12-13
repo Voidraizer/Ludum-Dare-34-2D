@@ -93,6 +93,7 @@ public class Grow : MonoBehaviour
     private bool dKeySwitched = false;
     private bool kKeySwitched = false;
     public bool dead = false;
+    private bool won = false;
 
     void Start()
     {
@@ -218,6 +219,11 @@ public class Grow : MonoBehaviour
         }
         else if( gameControls == Controls.EXPANDED )  //------------------- EXPANDED ---------------------
         {
+            // Cheat key because I'm tired of pushing the buttons 10000x to test
+            if( Input.GetKey( KeyCode.C ) )
+            {
+                GetBigger( growthGlucoseFlat );
+            }
             if( Input.GetKeyDown( KeyCode.D ) )
             {
                 dKeyPressTime = Time.time + keySwitchTime;
@@ -327,6 +333,16 @@ public class Grow : MonoBehaviour
             }
         }
 
+        // Win Condition
+        if( transform.localScale.y >= 25 )
+        {
+            if( !won )
+            {
+                won = true;
+                Win();
+            }
+        }
+
         waterRatio = waterStored / waterMax;
         sunlightRatio = sunlightStored / sunlightMax;
         glucoseRatio = glucoseStored / glucoseMax;
@@ -373,14 +389,31 @@ public class Grow : MonoBehaviour
             //shift color
             timeDifference = deathColorRate * ( Time.time - startTime );
             sprender.color = Color.Lerp( Starting, Ending, ( timeDifference / distance ) );
+            transform.localScale = transform.localScale * 0.99f;
             yield return new WaitForEndOfFrame();
             // when done
-            if( ( sprender.color == Ending ) || ( Time.time - startTime >= 5f ) )
+            
+            if( transform.localScale.y <= 1.5f )
             {
                 looping = false;
             }
         }
-        yield return new WaitForSeconds( 2f );
         Application.LoadLevel( 1 );
+    }
+
+    void Win()
+    {
+        StartCoroutine( WinTransition() );
+    }
+
+    IEnumerator WinTransition()
+    {
+        for( int i = 0; i < 9; i++ )
+        {
+            sprender.flipY = !sprender.flipY;
+            yield return new WaitForSeconds( .2f );
+        }
+        yield return new WaitForSeconds( 2f );
+        Application.LoadLevel( 2 );
     }
 }
