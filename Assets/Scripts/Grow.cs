@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Grow : MonoBehaviour
 {
@@ -398,7 +399,7 @@ public class Grow : MonoBehaviour
                 looping = false;
             }
         }
-        Application.LoadLevel( 1 );
+        SceneManager.LoadScene( 1 );
     }
 
     void Win()
@@ -413,7 +414,7 @@ public class Grow : MonoBehaviour
             sprender.flipY = !sprender.flipY;
             yield return new WaitForSeconds( .2f );
         }
-        yield return new WaitForSeconds( 2f );
-        Application.LoadLevel( 2 );
+        yield return new WaitForSeconds( 1f );
+        SceneManager.LoadScene( 2 );
     }
 }

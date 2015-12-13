@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class EndTryAgain : MonoBehaviour {
 
@@ -15,6 +16,6 @@ public class EndTryAgain : MonoBehaviour {
 
     public void TryAgain()
     {
-        Application.LoadLevel( 0 );
+        SceneManager.LoadScene( 0 );
     }
 }
