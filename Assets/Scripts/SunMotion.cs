@@ -58,7 +58,7 @@ public class SunMotion : MonoBehaviour {
                 case 4:
                     dayTime.IncrementDayTime();
                     break;
-                case 6:
+                case 5:
                     dayTime.IncrementDayTime();
                     break;
                 default:

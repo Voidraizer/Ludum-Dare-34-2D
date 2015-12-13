@@ -106,7 +106,7 @@ public class DayNightManager : MonoBehaviour {
                     }
                     yield return new WaitForEndOfFrame();
                     // when done
-                    if( ( Background.color == earlyMorning ) || ( Time.time - startTime >= 5f ) )
+                    if( ( Background.color == earlyMorning ) || ( Time.time - startTime >= 15f ) )
                     {
                         looping = false;
                     }
@@ -130,7 +130,7 @@ public class DayNightManager : MonoBehaviour {
                     }
                     yield return new WaitForEndOfFrame();
                     // when done
-                    if( ( Background.color == morning ) || ( Time.time - startTime >= 5f ) )
+                    if( ( Background.color == morning ) || ( Time.time - startTime >= 15f ) )
                     {
                         looping = false;
                     }
@@ -154,7 +154,7 @@ public class DayNightManager : MonoBehaviour {
                     }
                     yield return new WaitForEndOfFrame();
                     // when done
-                    if( ( Background.color == noon ) || ( Time.time - startTime >= 5f ) )
+                    if( ( Background.color == noon ) || ( Time.time - startTime >= 15f ) )
                     {
                         looping = false;
                     }
@@ -178,7 +178,7 @@ public class DayNightManager : MonoBehaviour {
                     }
                     yield return new WaitForEndOfFrame();
                     // when done
-                    if( ( Background.color == evening ) || ( Time.time - startTime >= 5f ) )
+                    if( ( Background.color == evening ) || ( Time.time - startTime >= 15f ) )
                     {
                         looping = false;
                     }
@@ -202,7 +202,7 @@ public class DayNightManager : MonoBehaviour {
                     }
                     yield return new WaitForEndOfFrame();
                     // when done
-                    if( ( Background.color == lateEvening ) || ( Time.time - startTime >= 5f ) )
+                    if( ( Background.color == lateEvening ) || ( Time.time - startTime >= 15f ) )
                     {
                         looping = false;
                     }

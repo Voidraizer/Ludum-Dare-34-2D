@@ -8,11 +8,6 @@ public class Options : MonoBehaviour {
 
     [SerializeField]
     private Text pausedText;
-
-	// Use this for initialization
-	void Start () {
-	
-	}
 	
 	// Update is called once per frame
 	void Update () {
