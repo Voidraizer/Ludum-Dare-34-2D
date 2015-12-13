@@ -107,8 +107,8 @@ public class Grow : MonoBehaviour
     void Update()
     {
 
-        float waterTotal = waterIncrement2 + seasons.waterSeasonMultiplier + days.waterTimeMultiplier;
-        float sunlightTotal = sunlightIncrement2 + seasons.sunlightSeasonMultiplier + days.sunlightTimeMultiplier;
+        float waterTotal = waterIncrement2 + seasons.waterSeasonMultiplier + days.waterTimeMultiplier + eventText.waterEventMod;
+        float sunlightTotal = sunlightIncrement2 + seasons.sunlightSeasonMultiplier + days.sunlightTimeMultiplier + eventText.sunlightEventMod;
         string waterMod = "";
         string sunlightMod = "";
 
@@ -125,13 +125,14 @@ public class Grow : MonoBehaviour
         {
             waterMod = "No bonus";
         }
-        else if( waterTotal >= 0.002f )
+        else if( waterTotal > 0f )
         {
             waterMod = "Reduced";
         }
-        else if( waterTotal == 0f )
+        else if( waterTotal <= 0f )
         {
             waterMod = "No gain";
+            waterTotal = 0f;
         }
         else
         {
@@ -151,13 +152,14 @@ public class Grow : MonoBehaviour
         {
             sunlightMod = "No bonus";
         }
-        else if( sunlightTotal >= 0.002f )
+        else if( sunlightTotal > 0f )
         {
             sunlightMod = "Reduced";
         }
-        else if( sunlightTotal == 0f )
+        else if( sunlightTotal <= 0f )
         {
             sunlightMod = "No gain";
+            sunlightTotal = 0f;
         }
         else
         {
@@ -230,11 +232,11 @@ public class Grow : MonoBehaviour
                 dKeyPressTime = Time.time + keySwitchTime;
                 if( dKey == DKeyControls.WATER )
                 {
-                    waterStored += waterIncrement2 + seasons.waterSeasonMultiplier + days.waterTimeMultiplier;
+                    waterStored += waterTotal;
                 }
                 else
                 {
-                    sunlightStored += sunlightIncrement2 + seasons.sunlightSeasonMultiplier + days.sunlightTimeMultiplier;
+                    sunlightStored += sunlightTotal;
                 }
                 dKeySwitched = false;
             }
