@@ -127,7 +127,7 @@ public class Grow : MonoBehaviour
         }
         else if( waterTotal >= 0.008f )
         {
-            waterMod = "No bonus";
+            waterMod = "Normal";
         }
         else if( waterTotal > 0f )
         {
@@ -154,7 +154,7 @@ public class Grow : MonoBehaviour
         }
         else if( sunlightTotal >= 0.008f )
         {
-            sunlightMod = "No bonus";
+            sunlightMod = "Normal";
         }
         else if( sunlightTotal > 0f )
         {
@@ -431,6 +431,7 @@ public class Grow : MonoBehaviour
                 looping = false;
             }
         }
+        yield return new WaitForSeconds( 1f );
         SceneManager.LoadScene( 1 );
     }
 
