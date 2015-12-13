@@ -63,6 +63,8 @@ public class Grow : MonoBehaviour
     DayNightManager days;
     [SerializeField]
     SeasonManager seasons;
+    [SerializeField]
+    Options options;
 
     [SerializeField]
     private Text waterBonus;
@@ -165,34 +167,36 @@ public class Grow : MonoBehaviour
         {
             sunlightMod = "Something's wrong";
         }
-
+       
         waterBonus.text = "Water Collection: " + waterMod;
         sunlightBonus.text = "Sunlight Collection: " + sunlightMod;
-
-        if( Input.GetKeyDown( KeyCode.G ) )
+        if( options.paused == false )
         {
-            if( gameControls == Controls.BASIC )
+            if( Input.GetKeyDown( KeyCode.G ) )
             {
-                gameControls = Controls.EXPANDED;
-            }
-            else
-            {
-                gameControls = Controls.BASIC;
+                if( gameControls == Controls.BASIC )
+                {
+                    gameControls = Controls.EXPANDED;
+                }
+                else
+                {
+                    gameControls = Controls.BASIC;
+                }
             }
         }
-
         if( gameControls == Controls.BASIC )
         {
-
-            if( Input.GetKeyDown( KeyCode.D ) )
+            if( options.paused == false )
             {
-                waterStored += waterIncrement;
+                if( Input.GetKeyDown( KeyCode.D ) )
+                {
+                    waterStored += waterIncrement;
+                }
+                if( Input.GetKeyDown( KeyCode.K ) )
+                {
+                    sunlightStored += sunlightIncrement;
+                }
             }
-            if( Input.GetKeyDown( KeyCode.K ) )
-            {
-                sunlightStored += sunlightIncrement;
-            }
-
             growth = ( waterStored / waterThreshold ) * ( sunlightStored / sunlightThreshold );
             if( growth < 1f )
             {
@@ -222,84 +226,87 @@ public class Grow : MonoBehaviour
         }
         else if( gameControls == Controls.EXPANDED )  //------------------- EXPANDED ---------------------
         {
-            // Cheat key because I'm tired of pushing the buttons 10000x to test
-            if( Input.GetKey( KeyCode.C ) )
+            if( options.paused == false )
             {
-                GetBigger( growthGlucoseFlat );
-            }
-            if( Input.GetKeyDown( KeyCode.D ) )
-            {
-                dKeyPressTime = Time.time + keySwitchTime;
-                if( dKey == DKeyControls.WATER )
+                // Cheat key because I'm tired of pushing the buttons 10000x to test
+                //if( Input.GetKey( KeyCode.C ) )
+                //{
+                //    GetBigger( growthGlucoseFlat );
+                //}
+                if( Input.GetKeyDown( KeyCode.D ) )
                 {
-                    waterStored += waterTotal;
-                }
-                else
-                {
-                    sunlightStored += sunlightTotal;
-                }
-                dKeySwitched = false;
-            }
-            if( Input.GetKeyDown( KeyCode.K ) )
-            {
-                kKeyPressTime = Time.time + keySwitchTime;
-                if( kKey == KKeyControls.GLUCOSE )
-                {
-                    if( ( glucoseStored < glucoseMax - glucoseIncrement ) && ( waterStored > 0f ) && ( sunlightStored > 0f ) )
+                    dKeyPressTime = Time.time + keySwitchTime;
+                    if( dKey == DKeyControls.WATER )
                     {
-                        glucoseStored += glucoseIncrement;
-                        waterStored -= waterDecrement2;
-                        sunlightStored -= sunlightDecrement2;
+                        waterStored += waterTotal;
                     }
-                }
-                else
-                {
-                    if( glucoseStored > 0f )
+                    else
                     {
-                        glucoseStored -= glucoseDecrement;
-                        GetBigger( growthGlucoseFlat );
+                        sunlightStored += sunlightTotal;
                     }
+                    dKeySwitched = false;
                 }
-                kKeySwitched = false;
-            }
+                if( Input.GetKeyDown( KeyCode.K ) )
+                {
+                    kKeyPressTime = Time.time + keySwitchTime;
+                    if( kKey == KKeyControls.GLUCOSE )
+                    {
+                        if( ( glucoseStored < glucoseMax - glucoseIncrement ) && ( waterStored > 0f ) && ( sunlightStored > 0f ) )
+                        {
+                            glucoseStored += glucoseIncrement;
+                            waterStored -= waterDecrement2;
+                            sunlightStored -= sunlightDecrement2;
+                        }
+                    }
+                    else
+                    {
+                        if( glucoseStored > 0f )
+                        {
+                            glucoseStored -= glucoseDecrement;
+                            GetBigger( growthGlucoseFlat );
+                        }
+                    }
+                    kKeySwitched = false;
+                }
 
-            if( Input.GetKey( KeyCode.D ) )
-            {
-                if( Time.time >= dKeyPressTime )
+                if( Input.GetKey( KeyCode.D ) )
                 {
-                    if( dKeySwitched == false )
+                    if( Time.time >= dKeyPressTime )
                     {
-                        if( dKey == DKeyControls.WATER )
+                        if( dKeySwitched == false )
                         {
-                            dKey = DKeyControls.SUNLIGHT;
-                            eventText.SpawnEventText( "Sunlight" );
+                            if( dKey == DKeyControls.WATER )
+                            {
+                                dKey = DKeyControls.SUNLIGHT;
+                                eventText.SpawnEventText( "Sunlight" );
+                            }
+                            else if( dKey == DKeyControls.SUNLIGHT )
+                            {
+                                dKey = DKeyControls.WATER;
+                                eventText.SpawnEventText( "Water" );
+                            }
+                            dKeySwitched = true;
                         }
-                        else if( dKey == DKeyControls.SUNLIGHT )
-                        {
-                            dKey = DKeyControls.WATER;
-                            eventText.SpawnEventText( "Water" );
-                        }
-                        dKeySwitched = true;
                     }
                 }
-            }
-            if( Input.GetKey( KeyCode.K ) )
-            {
-                if( Time.time >= kKeyPressTime )
+                if( Input.GetKey( KeyCode.K ) )
                 {
-                    if( kKeySwitched == false )
+                    if( Time.time >= kKeyPressTime )
                     {
-                        if( kKey == KKeyControls.GLUCOSE )
+                        if( kKeySwitched == false )
                         {
-                            kKey = KKeyControls.GROW;
-                            eventText.SpawnEventText( "Grow" );
+                            if( kKey == KKeyControls.GLUCOSE )
+                            {
+                                kKey = KKeyControls.GROW;
+                                eventText.SpawnEventText( "Grow" );
+                            }
+                            else if( kKey == KKeyControls.GROW )
+                            {
+                                kKey = KKeyControls.GLUCOSE;
+                                eventText.SpawnEventText( "Glucose" );
+                            }
+                            kKeySwitched = true;
                         }
-                        else if( kKey == KKeyControls.GROW )
-                        {
-                            kKey = KKeyControls.GLUCOSE;
-                            eventText.SpawnEventText( "Glucose" );
-                        }
-                        kKeySwitched = true;
                     }
                 }
             }

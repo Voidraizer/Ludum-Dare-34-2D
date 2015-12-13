@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class Options : MonoBehaviour {
 
-    private bool paused = false;
+    public bool paused = false;
 
     [SerializeField]
     private Text pausedText;
