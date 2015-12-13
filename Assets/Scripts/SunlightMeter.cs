@@ -12,7 +12,7 @@ public class SunlightMeter : MonoBehaviour
     // Use for assigning objects
     void Awake()
     {
-        grow_cs = GameObject.Find( "Tree" ).GetComponent<Grow>();
+        grow_cs = GameObject.Find( "Tree Parent" ).GetComponent<Grow>();
     }
 
     // Update is called once per frame

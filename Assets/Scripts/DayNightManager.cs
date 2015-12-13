@@ -8,6 +8,31 @@ public class DayNightManager : MonoBehaviour {
     public float sunlightTimeMultiplier = 1.0f;
 
     [SerializeField]
+    private float waterEarlyMorning = 0f;
+    [SerializeField]
+    private float waterMorning = 0f;
+    [SerializeField]
+    private float waterNoon = 0f;
+    [SerializeField]
+    private float waterEvening = 0f;
+    [SerializeField]
+    private float waterLateEvening = 0f;
+
+    [SerializeField]
+    private float sunlightEarlyMorning = 0f;
+    [SerializeField]
+    private float sunlightMorning = 0f;
+    [SerializeField]
+    private float sunlightNoon = 0f;
+    [SerializeField]
+    private float sunlightEvening = 0f;
+    [SerializeField]
+    private float sunlightLateEvening = 0f;
+
+    [SerializeField]
+    private Text dayTimeText;
+
+    [SerializeField]
     private GameObject Sun;
 
     [SerializeField]
@@ -44,6 +69,7 @@ public class DayNightManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         dayTime = timeOfDay.LATE_NIGHT;
+        dayTimeText.text = "Time: " + dayTime;
 	}
 	
 	// Update is called once per frame
@@ -58,6 +84,7 @@ public class DayNightManager : MonoBehaviour {
         float startTime = 0f;
         float timeDifference = 0f;
         Color Starting = Background.color;
+        dayTimeText.text = "Time: " + day;
 
         switch( day )
         {
@@ -66,8 +93,8 @@ public class DayNightManager : MonoBehaviour {
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( earlyMorning.r, earlyMorning.g, earlyMorning.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightTimeMultiplier = 0.9f;
-                waterTimeMultiplier = 1.2f;
+                sunlightTimeMultiplier = sunlightEarlyMorning;
+                waterTimeMultiplier = waterEarlyMorning;
                 while( looping )
                 {
                     //shift color
@@ -90,8 +117,8 @@ public class DayNightManager : MonoBehaviour {
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( morning.r, morning.g, morning.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightTimeMultiplier = 1.0f;
-                waterTimeMultiplier = 1.0f;
+                sunlightTimeMultiplier = sunlightMorning;
+                waterTimeMultiplier = waterMorning;
                 while( looping )
                 {
                     //shift color
@@ -114,8 +141,8 @@ public class DayNightManager : MonoBehaviour {
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( noon.r, noon.g, noon.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightTimeMultiplier = 1.1f;
-                waterTimeMultiplier = 0.9f;
+                sunlightTimeMultiplier = sunlightNoon;
+                waterTimeMultiplier = waterNoon;
                 while( looping )
                 {
                     //shift color
@@ -138,8 +165,8 @@ public class DayNightManager : MonoBehaviour {
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( evening.r, evening.g, evening.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightTimeMultiplier = 0.9f;
-                waterTimeMultiplier = 1.0f;
+                sunlightTimeMultiplier = sunlightEvening;
+                waterTimeMultiplier = -waterEvening;
                 while( looping )
                 {
                     //shift color
@@ -162,8 +189,8 @@ public class DayNightManager : MonoBehaviour {
                 distance = Vector3.Distance( new Vector3( Starting.r, Starting.g, Starting.b ), new Vector3( lateEvening.r, lateEvening.g, lateEvening.b ) );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightTimeMultiplier = 0.8f;
-                waterTimeMultiplier = 1.1f;
+                sunlightTimeMultiplier = sunlightLateEvening;
+                waterTimeMultiplier = waterLateEvening;
                 while( looping )
                 {
                     //shift color

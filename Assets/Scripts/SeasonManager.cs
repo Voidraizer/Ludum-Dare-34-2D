@@ -8,6 +8,24 @@ public class SeasonManager : MonoBehaviour {
     public float sunlightSeasonMultiplier = 1.0f;
 
     [SerializeField]
+    private float waterSpringMult = 0f;
+    [SerializeField]
+    private float waterSummerMult = 0f;
+    [SerializeField]
+    private float waterFallMult = 0f;
+    [SerializeField]
+    private float waterWinterMult = 0f;
+
+    [SerializeField]
+    private float sunlightSpringMult = 0f;
+    [SerializeField]
+    private float sunlightSummerMult = 0f;
+    [SerializeField]
+    private float sunlightFallMult = 0f;
+    [SerializeField]
+    private float sunlightWinterMult = 0f;
+
+    [SerializeField]
     private Text seasonText;
 
     [SerializeField]
@@ -29,12 +47,22 @@ public class SeasonManager : MonoBehaviour {
     private int cyclesPerSeason = 3;
     private int sunCycles = 0;
 
+    [SerializeField]
+    private Grow grow_cs;
+
+    [SerializeField]
+    private float springGrowthBonus;
+    [SerializeField]
+    private float winterGrowthPenalty;
+    private float defaultGrowth;
+
     enum seasons { SPRING, SUMMER, FALL, WINTER };
     seasons season = seasons.SUMMER;
 
     // Use this for initialization
     void Start () {
-	
+        defaultGrowth = grow_cs.growthGlucoseFlat;
+        seasonText.text = "Season: " + season;
 	}
 	
 	// Update is called once per frame
@@ -74,6 +102,7 @@ public class SeasonManager : MonoBehaviour {
         Color Starting = Background_Overlay.color;
         Color Ending = new Color( Background_Overlay.color.r, Background_Overlay.color.g, Background_Overlay.color.b, OverlayTransparency );
         Color Reseting = new Color( Starting.r, Starting.g, Starting.b, 0f );
+        seasonText.text = "Season: " + season;
 
         switch( season )
         {
@@ -85,8 +114,9 @@ public class SeasonManager : MonoBehaviour {
                 distance = Mathf.Abs( Starting.a - Reseting.a );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightSeasonMultiplier = 1.0f;
-                waterSeasonMultiplier = 1.2f;
+                sunlightSeasonMultiplier = sunlightSpringMult;
+                waterSeasonMultiplier = waterSpringMult;
+                grow_cs.growthGlucoseFlat = defaultGrowth + springGrowthBonus;
                 // grow really fast in spring  -- really slow in winter
                 while( looping )
                 {
@@ -131,8 +161,9 @@ public class SeasonManager : MonoBehaviour {
                 distance = Mathf.Abs( Starting.a - Reseting.a );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightSeasonMultiplier = 1.1f;
-                waterSeasonMultiplier = 0.8f;
+                sunlightSeasonMultiplier = sunlightSummerMult;
+                waterSeasonMultiplier = waterSummerMult;
+                grow_cs.growthGlucoseFlat = defaultGrowth;
                 while( looping )
                 {
                     //shift color
@@ -172,8 +203,9 @@ public class SeasonManager : MonoBehaviour {
                 distance = Mathf.Abs( Starting.a - Reseting.a );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightSeasonMultiplier = 1.0f;
-                waterSeasonMultiplier = 0.9f;
+                sunlightSeasonMultiplier = sunlightFallMult;
+                waterSeasonMultiplier = waterFallMult;
+                grow_cs.growthGlucoseFlat = defaultGrowth;
                 while( looping )
                 {
                     //shift color
@@ -216,8 +248,9 @@ public class SeasonManager : MonoBehaviour {
                 distance = Mathf.Abs( Starting.a - Reseting.a );
                 startTime = Time.time;
                 timeDifference = 0f;
-                sunlightSeasonMultiplier = 0.9f;
-                waterSeasonMultiplier = 1.1f;
+                sunlightSeasonMultiplier = sunlightWinterMult;
+                waterSeasonMultiplier = waterWinterMult;
+                grow_cs.growthGlucoseFlat = defaultGrowth - winterGrowthPenalty;
                 while( looping )
                 {
                     //shift color

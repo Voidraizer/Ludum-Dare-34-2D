@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Grow : MonoBehaviour
 {
@@ -8,8 +9,8 @@ public class Grow : MonoBehaviour
     private float growth = 0.0001f;
     [SerializeField]
     private float maxGrowth = 1.0001f;
-    [SerializeField]
-    private float growthGlucoseFlat = 1.001f;
+
+    public float growthGlucoseFlat = 1.001f;
 
     [SerializeField]
     private float waterStored = 0f;
@@ -63,6 +64,11 @@ public class Grow : MonoBehaviour
     SeasonManager seasons;
 
     [SerializeField]
+    private Text waterBonus;
+    [SerializeField]
+    private Text sunlightBonus;
+
+    [SerializeField]
     private float keySwitchTime = 1f;
     private float dKeyPressTime = 0f;
     private float kKeyPressTime = 0f;
@@ -98,10 +104,66 @@ public class Grow : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //   if( Input.GetKey( KeyCode.G ) )
-        //   {
-        //       transform.localScale = new Vector3( transform.localScale.x * growth, transform.localScale.y * growth, transform.localScale.z * growth );
-        //   }
+
+        float waterTotal = waterIncrement2 + seasons.waterSeasonMultiplier + days.waterTimeMultiplier;
+        float sunlightTotal = sunlightIncrement2 + seasons.sunlightSeasonMultiplier + days.sunlightTimeMultiplier;
+        string waterMod = "";
+        string sunlightMod = "";
+
+        // Water
+        if( waterTotal >= 0.016f )
+        {
+            waterMod = "Much greater";
+        }
+        else if( waterTotal >= 0.012f )
+        {
+            waterMod = "Little greater";
+        }
+        else if( waterTotal >= 0.008f )
+        {
+            waterMod = "No bonus";
+        }
+        else if( waterTotal >= 0.002f )
+        {
+            waterMod = "Reduced";
+        }
+        else if( waterTotal == 0f )
+        {
+            waterMod = "No gain";
+        }
+        else
+        {
+            waterMod = "Something's wrong";
+        }
+
+        // sunlight
+        if( sunlightTotal >= 0.016f )
+        {
+            sunlightMod = "Much greater";
+        }
+        else if( sunlightTotal >= 0.012f )
+        {
+            sunlightMod = "Little greater";
+        }
+        else if( sunlightTotal >= 0.008f )
+        {
+            sunlightMod = "No bonus";
+        }
+        else if( sunlightTotal >= 0.002f )
+        {
+            sunlightMod = "Reduced";
+        }
+        else if( sunlightTotal == 0f )
+        {
+            sunlightMod = "No gain";
+        }
+        else
+        {
+            sunlightMod = "Something's wrong";
+        }
+
+        waterBonus.text = "Water Collection: " + waterMod;
+        sunlightBonus.text = "Sunlight Collection: " + sunlightMod;
 
         if( Input.GetKeyDown( KeyCode.G ) )
         {
@@ -161,11 +223,11 @@ public class Grow : MonoBehaviour
                 dKeyPressTime = Time.time + keySwitchTime;
                 if( dKey == DKeyControls.WATER )
                 {
-                    waterStored += waterIncrement2 * seasons.waterSeasonMultiplier * days.waterTimeMultiplier;
+                    waterStored += waterIncrement2 + seasons.waterSeasonMultiplier + days.waterTimeMultiplier;
                 }
                 else
                 {
-                    sunlightStored += sunlightIncrement2;
+                    sunlightStored += sunlightIncrement2 + seasons.sunlightSeasonMultiplier + days.sunlightTimeMultiplier;
                 }
                 dKeySwitched = false;
             }
@@ -285,7 +347,11 @@ public class Grow : MonoBehaviour
 
     void GetBigger( float rate )
     {
+        Vector3 oldPos = new Vector3( transform.position.x, transform.position.y, transform.position.z );
         transform.localScale = new Vector3( transform.localScale.x * rate, transform.localScale.y * rate, transform.localScale.z * rate );
+        Vector3 newPos = new Vector3( transform.position.x, transform.position.y, transform.position.z );
+        Vector3 diff = new Vector3( transform.position.x, oldPos.y - ( oldPos.y - newPos.y ) / 2f, transform.position.z );
+        transform.position = diff;
     }
 
     void Die()
