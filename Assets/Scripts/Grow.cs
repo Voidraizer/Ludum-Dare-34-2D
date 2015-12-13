@@ -11,6 +11,8 @@ public class Grow : MonoBehaviour
     [SerializeField]
     private float maxGrowth = 1.0001f;
 
+    [SerializeField]
+    private float growthAnimRate = 0.05f;
     public float growthGlucoseFlat = 1.001f;
 
     [SerializeField]
@@ -263,7 +265,8 @@ public class Grow : MonoBehaviour
                         if( glucoseStored > 0f )
                         {
                             glucoseStored -= glucoseDecrement;
-                            GetBigger( growthGlucoseFlat );
+                            StartCoroutine( GrowLarger( growthGlucoseFlat ) );
+                            //GetBigger( growthGlucoseFlat );
                         }
                     }
                     kKeySwitched = false;
@@ -373,11 +376,31 @@ public class Grow : MonoBehaviour
 
     void GetBigger( float rate )
     {
-        Vector3 oldPos = new Vector3( transform.position.x, transform.position.y, transform.position.z );
         transform.localScale = new Vector3( transform.localScale.x * rate, transform.localScale.y * rate, transform.localScale.z * rate );
-        Vector3 newPos = new Vector3( transform.position.x, transform.position.y, transform.position.z );
-        Vector3 diff = new Vector3( transform.position.x, oldPos.y - ( oldPos.y - newPos.y ) / 2f, transform.position.z );
-        transform.position = diff;
+    }
+
+    IEnumerator GrowLarger( float rate )
+    {
+        bool looping = true;
+        float timeDifference = 0f;
+        Vector3 Starting = transform.localScale;
+        Vector3 Ending = new Vector3( (float)transform.localScale.x * rate, (float)transform.localScale.y * rate, (float)transform.localScale.z * rate );
+        float distance = Vector3.Distance( Starting, Ending );
+        float startTime = Time.time;
+        timeDifference = 0f;
+        while( looping )
+        {
+            //shift color
+            timeDifference = growthAnimRate * ( Time.time - startTime );
+            print( "timeDifference: " + timeDifference );
+            transform.localScale = Vector3.Lerp( Starting, Ending, ( timeDifference / distance ) );
+            yield return new WaitForEndOfFrame();
+            // when done
+            if( transform.localScale.y >= Ending.y )
+            {
+                looping = false;
+            }
+        }
     }
 
     void Die()
