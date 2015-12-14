@@ -45,7 +45,7 @@ public class EventText : MonoBehaviour {
     private float eventStartActual;
 
     private float previousEventEnd = 100f;
-    private bool cleanedUpPreviousEvent = false;
+    private bool cleanedUpPreviousEvent = true;
 
     private enum eventName { RAIN, DROUGHT, CLOUDY };
 
@@ -59,8 +59,9 @@ public class EventText : MonoBehaviour {
         eventDurationActual = Random.Range( eventDurationMin, eventDurationMax );
         eventBreakActual = Time.time + Random.Range( eventStartMin, eventStartMax );
 
-        cleanedUpPreviousEvent = false;
+        cleanedUpPreviousEvent = true;
         previousEventEnd = 100f;
+        endEvent = false;
 
         statEventText.text = "Event: None";
     }

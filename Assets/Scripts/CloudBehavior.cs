@@ -18,7 +18,19 @@ public class CloudBehavior : MonoBehaviour {
     private float sizeYMax = 2f;
 
     [SerializeField]
+    private float rainXMin = -8f;
+    [SerializeField]
+    private float rainXMax = 8f;
+    [SerializeField]
+    private float rainY = 3f;
+    [SerializeField]
+    private float rainSpawnDelay = 0.1f;
+
+    [SerializeField]
     private SpriteRenderer sprendor;
+
+    [SerializeField]
+    GameObject rainPreFab;
 
     [SerializeField]
     private float rainCloudFadeInRate = 0.05f;
@@ -27,6 +39,8 @@ public class CloudBehavior : MonoBehaviour {
     private float maxX = 0f;
 
     public bool rainCloud = false;
+
+    private bool raining = false;
 
 	// Use this for initialization
 	void Start () {
@@ -58,7 +72,7 @@ public class CloudBehavior : MonoBehaviour {
     public IEnumerator GenerateRainClouds( Color goal )
     {
         bool looping = true;
-        float distance = 255f;
+        float distance = 1f;
         float startTime = Time.time;
         float timeDifference = 0f;
         Color Starting = sprendor.color;
@@ -69,15 +83,18 @@ public class CloudBehavior : MonoBehaviour {
             sprendor.color = Color.Lerp( Starting, goal, ( timeDifference / distance ) );
             yield return new WaitForEndOfFrame();
             // when done
-            if( ( sprendor.color == goal ) || ( Time.time - startTime >= 15f ) )
+            if( ( sprendor.color == goal ) || ( Time.time - startTime >= 10f ) )
             {
                 looping = false;
             }
         }
+        raining = true;
+        StartCoroutine( Rain() );
     }
 
     public IEnumerator DestroyRainClouds()
     {
+        raining = false;
         bool looping = true;
         float distance = 1f;
         float startTime = Time.time;
@@ -97,5 +114,21 @@ public class CloudBehavior : MonoBehaviour {
             }
         }
         Destroy( gameObject );
+    }
+    
+    IEnumerator Rain()
+    {
+        if( rainCloud )
+        {
+            while( raining )
+            {
+                float spawnX = Random.Range( rainXMin, rainXMax );
+                float spawnY = rainY;
+
+                Instantiate( rainPreFab, new Vector3( spawnX, spawnY, 60 ), Quaternion.identity );
+                yield return new WaitForSeconds( rainSpawnDelay );
+
+            }
+        }
     }
 }

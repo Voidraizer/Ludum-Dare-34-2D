@@ -80,7 +80,7 @@ public class CloudManager : MonoBehaviour
         float spawnY = 3.7f;
         float scaleX = 26.77502f;
         float scaleY = 4.3f;
-        Color shade = new Color( 79f, 79f, 83f, 255f );
+        Color shade = new Color( 79f, 79f, 83f, 1f );
         raining = true;
 
         rainCloud = (GameObject)Instantiate( Cloud1PreFab, new Vector3( spawnX, spawnY, 70f ), Quaternion.identity );

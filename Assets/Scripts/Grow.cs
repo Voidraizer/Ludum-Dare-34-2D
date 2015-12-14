@@ -174,17 +174,17 @@ public class Grow : MonoBehaviour
         sunlightBonus.text = "Sunlight Collection: " + sunlightMod;
         if( options.paused == false )
         {
-            if( Input.GetKeyDown( KeyCode.G ) )
-            {
-                if( gameControls == Controls.BASIC )
-                {
-                    gameControls = Controls.EXPANDED;
-                }
-                else
-                {
-                    gameControls = Controls.BASIC;
-                }
-            }
+            //if( Input.GetKeyDown( KeyCode.G ) )
+            //{
+            //    if( gameControls == Controls.BASIC )
+            //    {
+            //        gameControls = Controls.EXPANDED;
+            //    }
+            //    else
+            //    {
+            //        gameControls = Controls.BASIC;
+            //    }
+            //}
         }
         if( gameControls == Controls.BASIC )
         {
